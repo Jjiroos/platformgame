@@ -3,23 +3,67 @@ package main;
 import inputs.KeyboardInputs;
 import inputs.MouseInputs;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import java.awt.*;
-import java.util.Random;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+
+import static utilz.Constants.PlayerConstants.*;
+import static utilz.Constants.Direction.*;
 
 public class GamePanel extends JPanel{
-    private float xShift = 100, yShift = 100;
-    private float xDir =0.5f, yDir=0.5f;
-    private Color color = new Color(98,45,78);
+    private final static int HERO_ANIMATION_Y = 9, HERO_ANIMATION_X = 6;
+    private int xImg = 1, yImg = 1;
     private MouseInputs mouseInputs;
-    private int frames = 0;
-    private long lastCheck = 0;
+    private BufferedImage heroImg;
+    private BufferedImage[][] animations;
+    private int animationTick, animationIndex, animationSpeed = 15;
+    private int playerAction = IDLE;
+    private int playerDirection = -1;
+    private boolean moving;
+
     public GamePanel(){
         mouseInputs = new MouseInputs(this);
         addKeyListener(new KeyboardInputs(this));
+        importImg();
+        loadAnimations();
         setPanelSize();
         addMouseListener(mouseInputs);
         addMouseMotionListener(mouseInputs);
+    }
+
+    private void loadAnimations(){
+        animations = new BufferedImage[HERO_ANIMATION_Y][HERO_ANIMATION_X];
+        for(int i =0; i<animations.length; i++){
+            for(int j=0; j<animations[i].length; j++){
+                animations[i][j] = heroImg.getSubimage(j*64,i*40,64,40);
+            }
+        }
+    }
+    private void setAnimation() {
+        if(moving)
+            playerAction = RUNNING;
+        else
+            playerAction = IDLE;
+    }
+    private void updateAnimationTick(){
+        animationTick++;
+        if(animationTick >= animationSpeed){
+            animationTick = 0;
+            animationIndex++;
+            if(animationIndex >= GetSpriteAmount(playerAction)) animationIndex=0;
+        }
+    }
+
+    private void importImg() {
+        InputStream inputStream = getClass().getResourceAsStream("/player_sprites.png");
+        try {
+            heroImg = ImageIO.read(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void setPanelSize() {
@@ -31,40 +75,39 @@ public class GamePanel extends JPanel{
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        updateGform();
-        g.setColor(color);
-        g.fillRect((int)xShift,(int)yShift,100,50);
-
-    }
-    public void changexShift(int xShift){
-        this.xShift += xShift;
-    }
-    public void changeyShift(int yShift){
-        this.yShift += yShift;
+        updateAnimationTick();
+        setAnimation();
+        updatePlayerPosition();
+        g.drawImage(animations[playerAction][animationIndex], xImg, yImg,256,160,null);
     }
 
-    public void changeRectPosition(int x, int y){
-        this.xShift = x;
-        this.yShift = y;
-    }
-    public void updateGform(){
-        xShift+=xDir;
-        if(xShift > 400 || xShift < 0){
-            xDir*=-1;
-            color = getRandomColor();
-        }
-        yShift+=yDir;
-        if(yShift > 400 || yShift < 0){
-            yDir*=-1;
-            color = getRandomColor();
+    private void updatePlayerPosition() {
+        if(moving){
+            switch (playerDirection){
+                case LEFT:
+                    xImg-=5;
+                    break;
+                case UP:
+                    yImg-=5;
+                    break;
+                case RIGHT:
+                    xImg+=5;
+                    break;
+                case DOWN:
+                    yImg+=5;
+                    break;
+            }
         }
     }
 
-    private Color getRandomColor() {
-        Random random = new Random();
-        int r = random.nextInt(255);
-        int g = random.nextInt(255);
-        int b = random.nextInt(255);;
-        return new Color(r,g,b);
+
+    public void setDirection(int direction){
+        this.playerDirection = direction;
+        moving = true;
     }
+
+    public void setMoving(boolean moving){
+        this.moving = moving;
+    }
+
 }

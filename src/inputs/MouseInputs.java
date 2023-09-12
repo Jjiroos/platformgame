@@ -80,7 +80,7 @@ public class MouseInputs implements MouseListener, MouseMotionListener {
      */
     @Override
     public void mouseDragged(MouseEvent e) {
-        gamePanel.changeRectPosition(e.getX(), e.getY());
+
     }
 
     /**
