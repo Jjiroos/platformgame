@@ -1,6 +1,7 @@
 package main;
 
 import entities.Player;
+import levels.LevelManager;
 
 import java.awt.*;
 
@@ -9,6 +10,7 @@ public class Game implements Runnable{
     private GamePanel gamePanel;
     private Thread gameLoopThread;
     private Player player;
+    private LevelManager levelManager;
     private final int FPS_SET = 120;
     private final int UPS_SET = 200;
     public Game(){
@@ -16,6 +18,7 @@ public class Game implements Runnable{
         gamePanel = new GamePanel(this);
         gameWindow = new GameWindow(gamePanel);
         gamePanel.requestFocus();
+        levelManager = new LevelManager(this);
         startGameLoop();
     }
 
@@ -30,10 +33,12 @@ public class Game implements Runnable{
 
     public void update(){
         player.update();
+        levelManager.update();
     }
 
     public void render(Graphics g){
         player.render(g);
+        levelManager.draw(g);
     }
 
     /**
