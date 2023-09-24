@@ -23,7 +23,7 @@ public class Game implements Runnable{
     }
 
     private void initEntities() {
-        player = new Player(200,200);
+        player = new Player(200F,200,(int)(64*GameWindow.SCALE),(int)(40*GameWindow.SCALE));
     }
 
     private void startGameLoop(){

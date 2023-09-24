@@ -19,19 +19,21 @@ public class Player extends Entity{
     private boolean down;
     private boolean moving;
     private boolean attacking;
-    public Player(float x, float y) {
-        super(x, y);
+    public Player(float x, float y,int width, int heigth) {
+        super(x, y,width,heigth);
         loadAnimations();
     }
 
     public void update(){
         updatePlayerPosition();
+        updateHitbox();
         updateAnimationTick();
         setAnimation();
     }
 
     public void render(Graphics g){
         g.drawImage(animations[playerAction][animationIndex], (int)xPosition, (int)yPosition,128,80,null);
+        drawHitbox(g);
     }
     private void setAnimation() {
         int startAnimation = playerAction;
