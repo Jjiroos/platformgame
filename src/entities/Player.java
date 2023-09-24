@@ -12,7 +12,7 @@ public class Player extends Entity{
     private BufferedImage[][] animations;
     private int animationTick, animationIndex, animationSpeed = 15;
     private int playerAction = IDLE;
-    private int playerSpeed = 3;
+    private int playerSpeed = 2;
     private boolean left;
     private boolean up;
     private boolean right;
@@ -31,7 +31,7 @@ public class Player extends Entity{
     }
 
     public void render(Graphics g){
-        g.drawImage(animations[playerAction][animationIndex], (int)xPosition, (int)yPosition,256,160,null);
+        g.drawImage(animations[playerAction][animationIndex], (int)xPosition, (int)yPosition,128,80,null);
     }
     private void setAnimation() {
         int startAnimation = playerAction;
@@ -83,7 +83,7 @@ public class Player extends Entity{
     }
 
     private void loadAnimations(){
-        BufferedImage heroImg = LoadSave.getSpriteAtlas(LoadSave.PLAYER_ATLAS);
+        BufferedImage heroImg = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ATLAS);
         animations = new BufferedImage[HERO_ANIMATION_Y][HERO_ANIMATION_X];
         for(int i =0; i<animations.length; i++){
             for(int j=0; j<animations[i].length; j++){

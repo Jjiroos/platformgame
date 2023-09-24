@@ -15,10 +15,10 @@ public class Game implements Runnable{
     private final int UPS_SET = 200;
     public Game(){
         initEntities();
+        levelManager = new LevelManager(this);
         gamePanel = new GamePanel(this);
         gameWindow = new GameWindow(gamePanel);
         gamePanel.requestFocus();
-        levelManager = new LevelManager(this);
         startGameLoop();
     }
 
@@ -32,13 +32,13 @@ public class Game implements Runnable{
     }
 
     public void update(){
-        player.update();
         levelManager.update();
+        player.update();
     }
 
     public void render(Graphics g){
-        player.render(g);
         levelManager.draw(g);
+        player.render(g);
     }
 
     /**
