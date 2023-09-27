@@ -15,7 +15,6 @@ public class Game implements Runnable{
     private final int UPS_SET = 200;
     public Game(){
         initEntities();
-        levelManager = new LevelManager(this);
         gamePanel = new GamePanel(this);
         gameWindow = new GameWindow(gamePanel);
         gamePanel.requestFocus();
@@ -23,7 +22,9 @@ public class Game implements Runnable{
     }
 
     private void initEntities() {
-        player = new Player(200F,200,(int)(64*GameWindow.SCALE),(int)(40*GameWindow.SCALE));
+        levelManager = new LevelManager(this);
+        player = new Player(200F,200F,(int)(64*GameWindow.SCALE),(int)(40*GameWindow.SCALE));
+        player.loadLevelData(levelManager.getCurrentLevel().getLevelDatas());
     }
 
     private void startGameLoop(){

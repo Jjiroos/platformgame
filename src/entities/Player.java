@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import static utilz.Constants.PlayerConstants.*;
+import static utilz.HelpMethods.*;
 
 public class Player extends Entity{
     private final static int HERO_ANIMATION_Y = 9, HERO_ANIMATION_X = 6;
@@ -19,6 +20,7 @@ public class Player extends Entity{
     private boolean down;
     private boolean moving;
     private boolean attacking;
+    private int[][] levelData;
     public Player(float x, float y,int width, int heigth) {
         super(x, y,width,heigth);
         loadAnimations();
@@ -65,23 +67,27 @@ public class Player extends Entity{
     }
     private void updatePlayerPosition() {
         moving = false;
+        if(!left && !right && !up && !down)
+            return;
 
-        if(left && !right) {
-            xPosition-= playerSpeed;
+        float xSpeed = 0, ySpeed = 0;
+
+        if(left && !right)
+            xSpeed= -playerSpeed;
+        else if(!left && right)
+            xSpeed= playerSpeed;
+
+        if(up && !down)
+            ySpeed = -playerSpeed;
+        else if(!up && down)
+            ySpeed =playerSpeed;
+
+        if(CanMoveHere(xPosition+xSpeed, yPosition+ySpeed, width, height, levelData)){
+            this.xPosition += xSpeed;
+            this.yPosition += ySpeed;
             moving = true;
         }
-        else if(!left && right){
-            xPosition+= playerSpeed;
-            moving = true;
-        }
-        if(up && !down){
-            yPosition-=playerSpeed;
-            moving = true;
-        }
-        if(!up && down){
-            yPosition+=playerSpeed;
-            moving =true;
-        }
+
     }
 
     private void loadAnimations(){
@@ -92,6 +98,9 @@ public class Player extends Entity{
                 animations[i][j] = heroImg.getSubimage(j*64,i*40,64,40);
             }
         }
+    }
+    public void loadLevelData(int [][] levelData){
+        this.levelData = levelData;
     }
     public void resetDirBoolean(){
         up = false;
