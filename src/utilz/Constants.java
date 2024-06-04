@@ -1,6 +1,18 @@
 package utilz;
 
+import main.GameWindow;
+
 public class Constants {
+
+    public static class UI{
+        public static final class Buttons{
+            public static final int BT_WIDTH_DEFAULT = 140 ;
+            public static final int BT_HEIGHT_DEFAULT = 56;
+            public static final int BT_WIDTH = (int) (BT_WIDTH_DEFAULT * GameWindow.SCALE);
+            public static final int BT_HEIGHT = (int) (BT_HEIGHT_DEFAULT * GameWindow.SCALE);
+        }
+    }
+
     public static class Direction{
         public static final int LEFT = 0;
         public static final int UP = 1;
