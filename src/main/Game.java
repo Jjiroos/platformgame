@@ -1,7 +1,8 @@
 package main;
 
-import entities.Player;
-import levels.LevelManager;
+import gamestates.GameMenu;
+import gamestates.GamePlaying;
+import gamestates.GameStates;
 
 import java.awt.*;
 
@@ -9,10 +10,18 @@ public class Game implements Runnable{
     private GameWindow gameWindow;
     private GamePanel gamePanel;
     private Thread gameLoopThread;
-    private Player player;
-    private LevelManager levelManager;
     private final int FPS_SET = 120;
     private final int UPS_SET = 200;
+
+//    public enum GameStates {
+//        PLAYING, MENU;
+//
+//        public static GameStates gameState = MENU;
+//    }
+
+    private GamePlaying gamePlaying;
+    private GameMenu gameMenu;
+
     public Game(){
         initEntities();
         gamePanel = new GamePanel(this);
@@ -22,9 +31,8 @@ public class Game implements Runnable{
     }
 
     private void initEntities() {
-        levelManager = new LevelManager(this);
-        player = new Player(200F,200F,(int)(64*GameWindow.SCALE),(int)(40*GameWindow.SCALE));
-        player.loadLevelData(levelManager.getCurrentLevel().getLevelDatas());
+        gamePlaying = new GamePlaying(this);
+        gameMenu = new GameMenu(this);
     }
 
     private void startGameLoop(){
@@ -33,13 +41,27 @@ public class Game implements Runnable{
     }
 
     public void update(){
-        levelManager.update();
-        player.update();
+
+        switch(GameStates.gameState){
+            case GameStates.MENU:
+                gameMenu.update();
+                break;
+            case GameStates.PLAYING:
+                gamePlaying.update();
+                break;
+        }
     }
 
     public void render(Graphics g){
-        levelManager.draw(g);
-        player.render(g);
+
+        switch(GameStates.gameState){
+            case GameStates.MENU:
+                gameMenu.draw(g);
+                break;
+            case GameStates.PLAYING:
+                gamePlaying.draw(g);
+                break;
+        }
     }
 
     /**
@@ -88,18 +110,23 @@ public class Game implements Runnable{
 
             if(System.currentTimeMillis() - lastCheck >= 1000){
                 lastCheck = System.currentTimeMillis();
-                System.out.println("FPS : "+frames + "UPS : "+updates);
+                System.out.println("FPS : "+frames + " | UPS : "+updates);
                 frames = 0;
                 updates = 0;
             }
         }
     }
 
-    public Player getPlayer(){
-        return player;
+    public void windowFocusLost() {
+        if(GameStates.gameState == GameStates.PLAYING)
+            gamePlaying.getPlayer().resetDirBoolean();
     }
 
-    public void windowFocusLost() {
-        player.resetDirBoolean();
+    public GameMenu getGameMenu() {
+        return gameMenu;
+    }
+
+    public GamePlaying getGamePlaying() {
+        return gamePlaying;
     }
 }
